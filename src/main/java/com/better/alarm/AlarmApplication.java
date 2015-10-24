@@ -57,6 +57,7 @@ public class AlarmApplication extends Application {
     public void onCreate() {
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+        AlarmClockComponent.Singleton.initialze(DaggerAlarmClockComponent.builder().alarmClockModule(new AlarmClockModule(this)).build());
         DynamicThemeHandler.init(this);
         setTheme(DynamicThemeHandler.getInstance().getIdForName(DynamicThemeHandler.DEFAULT));
 

@@ -32,6 +32,7 @@ import android.database.Cursor;
 import android.os.CountDownTimer;
 import android.os.Handler;
 
+import com.better.alarm.AlarmClockComponent;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
@@ -89,8 +90,7 @@ public class Alarms implements IAlarmsManager {
             try {
                 if (cursor.moveToFirst()) {
                     do {
-                        AlarmContainer container = new AlarmContainer(cursor, log, mContext);
-                        final AlarmCore a = new AlarmCore(container, mContext, log, mAlarmsScheduler, broadcaster);
+                        final AlarmCore a = AlarmClockComponent.Singleton.getsInstance().alarmCoreFactory().fromCursor(cursor);
                         alarms.put(a.getId(), a);
                     } while (cursor.moveToNext());
                 }
@@ -130,8 +130,8 @@ public class Alarms implements IAlarmsManager {
 
     @Override
     public Alarm createNewAlarm() {
-        AlarmContainer container = new AlarmContainer(log, mContext);
-        AlarmCore alarm = new AlarmCore(container, mContext, log, mAlarmsScheduler, broadcaster);
+        AlarmCore alarm =  AlarmClockComponent.Singleton.getsInstance().alarmCoreFactory().fromScratch();
+
         alarms.put(alarm.getId(), alarm);
         notifyAlarmListChangedListeners();
         return alarm;

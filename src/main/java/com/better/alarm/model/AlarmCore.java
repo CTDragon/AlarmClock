@@ -45,6 +45,8 @@ import com.github.androidutils.statemachine.IState;
 import com.github.androidutils.statemachine.State;
 import com.github.androidutils.statemachine.StateMachine;
 
+import javax.inject.Inject;
+
 /**
  * Alarm is a class which models a real word alarm. It is a simple state
  * machine. External events (e.g. user input {@link #snooze()} or
@@ -131,6 +133,7 @@ public final class AlarmCore implements Alarm {
 
     private final DateFormat df;
 
+    @Inject
     public AlarmCore(IAlarmContainer container, Context context, Logger logger, IAlarmsScheduler alarmsScheduler,
             IStateNotifier broadcaster) {
         mContext = context;
