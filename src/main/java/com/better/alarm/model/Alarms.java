@@ -33,12 +33,16 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 
 import com.better.alarm.AlarmClockComponent;
+import com.better.alarm.IAlarmCoreFactory;
 import com.better.alarm.model.interfaces.Alarm;
 import com.better.alarm.model.interfaces.AlarmNotFoundException;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.better.alarm.model.interfaces.Intents;
 import com.better.alarm.model.persistance.AlarmContainer;
 import com.github.androidutils.logger.Logger;
+import com.google.common.base.Preconditions;
+
+import javax.inject.Inject;
 
 /**
  * The Alarms implements application domain logic
@@ -57,18 +61,19 @@ public class Alarms implements IAlarmsManager {
 
     private final ContentResolver mContentResolver;
     private final Map<Integer, AlarmCore> alarms;
-    private final AlarmStateNotifier broadcaster;
+    private final IAlarmCoreFactory alarmFactory;
 
     private final DatabaseRetryCountDownTimer databaseRetryCountDownTimer;
 
-    Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler) {
+    @Inject
+    Alarms(Context context, Logger logger, IAlarmsScheduler alarmsScheduler, IAlarmCoreFactory alarmFactory) {
         mContext = context;
         log = logger;
         mAlarmsScheduler = alarmsScheduler;
+        this.alarmFactory = Preconditions.checkNotNull(alarmFactory);
 
         mContentResolver = mContext.getContentResolver();
         alarms = new HashMap<Integer, AlarmCore>();
-        broadcaster = new AlarmStateNotifier(mContext);
 
         databaseRetryCountDownTimer = new DatabaseRetryCountDownTimer(RETRY_TOTAL_TIME, RETRY_INTERVAL);
 
@@ -90,7 +95,7 @@ public class Alarms implements IAlarmsManager {
             try {
                 if (cursor.moveToFirst()) {
                     do {
-                        final AlarmCore a = AlarmClockComponent.Singleton.getsInstance().alarmCoreFactory().fromCursor(cursor);
+                        final AlarmCore a = alarmFactory.fromCursor(cursor);
                         alarms.put(a.getId(), a);
                     } while (cursor.moveToNext());
                 }

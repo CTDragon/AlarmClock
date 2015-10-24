@@ -38,6 +38,10 @@ import com.better.alarm.BuildConfig;
 import com.better.alarm.model.interfaces.Intents;
 import com.github.androidutils.logger.Logger;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class AlarmsScheduler implements IAlarmsScheduler {
     static final String ACTION_FIRED = BuildConfig.APPLICATION_ID + ".ACTION_FIRED";
     static final String EXTRA_ID = "intent.extra.alarm";
@@ -99,6 +103,7 @@ public class AlarmsScheduler implements IAlarmsScheduler {
     private final ISetAlarmStrategy setAlarmStrategy;
     private final AlarmManager am;
 
+    @Inject
     public AlarmsScheduler(Context context, Logger logger) {
         mContext = context;
         am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);

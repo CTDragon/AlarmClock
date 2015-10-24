@@ -21,6 +21,7 @@ import org.acra.ACRA;
 
 import android.content.Context;
 
+import com.better.alarm.AlarmClockComponent;
 import com.better.alarm.model.interfaces.IAlarmsManager;
 import com.github.androidutils.logger.Logger;
 
@@ -42,10 +43,9 @@ public class AlarmsManager {
 
     public static void init(Context context, Logger logger) {
         if (sModelInstance == null) {
-            sModelInstance = new Alarms(context, logger, new AlarmsScheduler(context, logger));
-        } else {
-            sModelInstance = new Alarms(context, logger, new AlarmsScheduler(context, logger));
             ACRA.getErrorReporter().handleException(new Exception("Attept to reinitialize!"));
+        } else {
+            sModelInstance =  AlarmClockComponent.Singleton.getsInstance().alarms();
         }
     }
 }
